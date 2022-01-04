@@ -18,7 +18,7 @@
         "upFill" : "rgba(0,0,255,1)"
     },
     "4" : {
-        "fill" : "rgba(255,0,0,1)"
+        "image" : "./pixil-frame-015.png"
     },
     "5" : {
         "fill" : "rgba(0,255,0,1)"

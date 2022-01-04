@@ -5,17 +5,11 @@ class GameMap {
 
     /**
      * 
-     * @param {[{pos: vector3D[], typeId: Number}]} mapData 
+     * @param {[Tile]} mapData 
      */
     constructor (mapData) {
         mapData.forEach(tile => {
-            this.addTile(
-                new Cube(
-                    tile.pos,
-                    tile.typeId, 
-                    this
-                )
-            )
+            this.addTile(tile)
         })
     }
 
@@ -48,20 +42,18 @@ class Tile {
     pos
     /** @type {string} */
     name
-    /** @type {GameMap} */
-    map
     /** @type {Number} */
     typeId
 
     /** @type {{tile: Tile, up: Tile, down: Tile, left: Tile, right: Tile, front: Tile, back: Tile}} */
     neighbors = {
         tile: {},
-        get up() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y-1]?.[this.tile.pos.z]},
-        get down() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y+1]?.[this.tile.pos.z]},
-        get left() {return this.tile.map.tiles[this.tile.pos.x+1]?.[this.tile.pos.y]?.[this.tile.pos.z]},
-        get right() {return this.tile.map.tiles[this.tile.pos.x-1]?.[this.tile.pos.y]?.[this.tile.pos.z]},
-        get front() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y]?.[this.tile.pos.z+1]},
-        get back() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y]?.[this.tile.pos.z-1]}
+        get up() {return Globals.loadedMap.tiles[this.tile.pos.x]?.[this.tile.pos.y-1]?.[this.tile.pos.z]},
+        get down() {return Globals.loadedMap.tiles[this.tile.pos.x]?.[this.tile.pos.y+1]?.[this.tile.pos.z]},
+        get left() {return Globals.loadedMap.tiles[this.tile.pos.x+1]?.[this.tile.pos.y]?.[this.tile.pos.z]},
+        get right() {return Globals.loadedMap.tiles[this.tile.pos.x-1]?.[this.tile.pos.y]?.[this.tile.pos.z]},
+        get front() {return Globals.loadedMap.tiles[this.tile.pos.x]?.[this.tile.pos.y]?.[this.tile.pos.z+1]},
+        get back() {return Globals.loadedMap.tiles[this.tile.pos.x]?.[this.tile.pos.y]?.[this.tile.pos.z-1]}
     }
 
     constructor (position, typeId, map) {
@@ -92,5 +84,24 @@ class Cube extends Tile {
 
     draw () {
         Globals.isoEngine.drawCube(this)
+    }
+}
+
+class Sprite extends Tile {
+
+    /** @type {Promise} */
+    image
+    
+    constructor (position, typeId, map) {
+        super(position, typeId, map)
+        let img = new Image()
+        img.src = Globals.tileSet[typeId].image
+        this.image = new Promise((resolve) => {
+            img.onload = () => {resolve(img)}
+        })
+    }
+
+    draw () {
+        Globals.isoEngine.drawSprite(this)
     }
 }
