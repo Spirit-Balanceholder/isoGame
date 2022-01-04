@@ -1,0 +1,29 @@
+{
+    "0" : {
+        "fill" : "rgba(0,0,0,0)"
+    },
+    "1" : {
+        "frontFill" : "rgba(187,0,0,1)",
+        "leftFill" : "rgba(136,0,0,1)",
+        "upFill" : "rgba(255,0,0,1)"
+    },
+    "2" : {
+        "frontFill" : "rgba(0,187,0,1)",
+        "leftFill" : "rgba(0,136,0,1)",
+        "upFill" : "rgba(0,255,0,1)"
+    },   
+    "3" : {
+        "frontFill" : "rgba(0,0,187,1)",
+        "leftFill" : "rgba(0,0,136,1)",
+        "upFill" : "rgba(0,0,255,1)"
+    },
+    "4" : {
+        "fill" : "rgba(255,0,0,1)"
+    },
+    "5" : {
+        "fill" : "rgba(0,255,0,1)"
+    },   
+    "6" : {
+        "fill" : "rgba(0,0,255,1)"
+    }
+}

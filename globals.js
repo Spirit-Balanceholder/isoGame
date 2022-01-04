@@ -7,4 +7,7 @@ class Globals {
 
     /** @type {GameMap} */
     static loadedMap
+
+    /** @type {Object} */
+    static tileSet
 }

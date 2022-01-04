@@ -4,11 +4,18 @@ class GameMap {
     tiles= {}
 
     /**
-     * @param {vector3D[]} mapData 
+     * 
+     * @param {[{pos: vector3D[], typeId: Number}]} mapData 
      */
     constructor (mapData) {
         mapData.forEach(tile => {
-            this.addTile(new Cube(tile.x, tile.y, tile.z, this))
+            this.addTile(
+                new Cube(
+                    tile.pos,
+                    tile.typeId, 
+                    this
+                )
+            )
         })
     }
 
@@ -17,16 +24,16 @@ class GameMap {
      * @param {Tile} tile 
      */
     addTile (tile) {
-        if (!this.tiles[tile.x])
-            this.tiles[tile.x] = {}
-        if (!this.tiles[tile.x][tile.y])
-            this.tiles[tile.x][tile.y] = {}
-        this.tiles[tile.x][tile.y][tile.z] = tile
+        if (!this.tiles[tile.pos.x])
+            this.tiles[tile.pos.x] = {}
+        if (!this.tiles[tile.pos.x][tile.pos.y])
+            this.tiles[tile.pos.x][tile.pos.y] = {}
+        this.tiles[tile.pos.x][tile.pos.y][tile.pos.z] = tile
     }
 
     draw() {
         for (const x of Object.keys(this.tiles)) {
-            for (const y of Object.keys(this.tiles[x])) {
+            for (const y of Object.keys(this.tiles[x]).sort((a, b) => b - a)) {
                 for (const z of Object.keys(this.tiles[x][y])) {
                     this.tiles[x][y][z].draw();
                 }
@@ -36,44 +43,54 @@ class GameMap {
 }
 
 class Tile {
-
-    /** @type {Number} */
-    x
-    /** @type {Number} */
-    y
-    /** @type {Number} */
-    z
+    
+    /**@type {vector3D} */
+    pos
     /** @type {string} */
     name
     /** @type {GameMap} */
     map
+    /** @type {Number} */
+    typeId
 
-    /** @type {{up: Tile, down: Tile, left: Tile, right: Tile, front: Tile, back: Tile}} */
+    /** @type {{tile: Tile, up: Tile, down: Tile, left: Tile, right: Tile, front: Tile, back: Tile}} */
     neighbors = {
-        get up() {return this.map.tiles[this.x][this.y-1][this.z]},
-        get down() {return this.map.tiles[this.x][this.y+1][this.z]},
-        get left() {return this.map.tiles[this.x-1][this.y][this.z]},
-        get right() {return this.map.tiles[this.x+1][this.y][this.z]},
-        get front() {return this.map.tiles[this.x][this.y][this.z-1]},
-        get back() {return this.map.tiles[this.x][this.y][this.z+1]}
+        tile: {},
+        get up() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y-1]?.[this.tile.pos.z]},
+        get down() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y+1]?.[this.tile.pos.z]},
+        get left() {return this.tile.map.tiles[this.tile.pos.x+1]?.[this.tile.pos.y]?.[this.tile.pos.z]},
+        get right() {return this.tile.map.tiles[this.tile.pos.x-1]?.[this.tile.pos.y]?.[this.tile.pos.z]},
+        get front() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y]?.[this.tile.pos.z+1]},
+        get back() {return this.tile.map.tiles[this.tile.pos.x]?.[this.tile.pos.y]?.[this.tile.pos.z-1]}
     }
 
-    constructor (x, y, z, map) {
-        this.x = x
-        this.y = y
-        this.z = z
+    constructor (position, typeId, map) {
+        this.pos = position
+        this.typeId = typeId
+        this.map = map
+        this.neighbors.tile = this;
     }
 
     draw(){}
 }
 
 class Cube extends Tile {
-    constructor (x, y, z, map) {
-        super(x, y, z, map)
 
+    /** @type {String} */
+    frontFill
+    /** @type {String} */
+    leftFill
+    /** @type {String} */
+    upFill
+    
+    constructor (position, typeId, map) {
+        super(position, typeId, map)
+        this.frontFill = Globals.tileSet[typeId].frontFill
+        this.leftFill = Globals.tileSet[typeId].leftFill
+        this.upFill = Globals.tileSet[typeId].upFill
     }
 
     draw () {
-        Globals.isoEngine.drawTile(this.x, this.y, this.z)
+        Globals.isoEngine.drawCube(this)
     }
 }
